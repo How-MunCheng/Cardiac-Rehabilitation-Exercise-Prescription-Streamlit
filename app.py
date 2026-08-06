@@ -197,14 +197,11 @@ def encode_dataframe(df, encoders, features):
 
         value = str(df.at[0, col]).strip().lower()
 
-        if value not in mapping:
-            raise ValueError(
-                f"{col}: '{value}' not found in encoder."
-            )
-
-        df[col] = mapping[value]
+        # Encode known values; unseen values become -1
+        df.at[0, col] = mapping.get(value, -1)
 
     return df
+    
 
 if page == "Prediction":
 
