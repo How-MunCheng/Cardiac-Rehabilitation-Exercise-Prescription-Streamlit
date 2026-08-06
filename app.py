@@ -316,14 +316,9 @@ if page == "Prediction":
         exercise_mode = st.selectbox(
             "Exercise Habit - Mode",
             [
-                "no",
                 "walking",
                 "jogging",
                 "cycling",
-                "walking+cycling",
-                "walking+jogging",
-                "jogging+cycling",
-                "walking+jogging+cycling",
                 "others"
             ],
             key="exercise_mode"
