@@ -493,9 +493,9 @@ if page == "Prediction":
                 "Fatigue",
                 "Medical Condition",
                 "Physical Discomfort",
-                "Medical Condition + Physical Discomfort",
-                "Fatigue + Medical Condition",
-                "Fatigue + Physical Discomfort"
+                "Medical Condition+Physical Discomfort",
+                "Fatigue+Medical Condition",
+                "Fatigue+Physical Discomfort"
             ],
             key="termination"
         )
