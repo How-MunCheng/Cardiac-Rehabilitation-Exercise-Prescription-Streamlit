@@ -179,29 +179,60 @@ type_features = [
 ]
 
 # Prediction page
+import pandas as pd
+
 def encode_dataframe(df, encoders, features):
 
     df = df.copy()
 
     for col in features:
 
-        if col not in encoders:
+        if col not in df.columns:
             continue
 
-        encoder = encoders[col]
+        # If this feature has a saved LabelEncoder
+        if col in encoders:
 
-        mapping = {
-            cls.lower(): i
-            for i, cls in enumerate(encoder.classes_)
-        }
+            encoder = encoders[col]
 
-        value = str(df.at[0, col]).strip().lower()
+            mapping = {
+                str(cls).strip().lower(): i
+                for i, cls in enumerate(encoder.classes_)
+            }
 
-        # Encode known values; unseen values become -1
-        df.at[0, col] = mapping.get(value, -1)
+            value = str(df.at[0, col]).strip().lower()
+
+            # Unknown category -> -1
+            # Convert the column to object first so it can hold integers
+            df[col] = df[col].astype(object)
+            df.at[0, col] = mapping.get(value, -1)
+            
+        else:
+            # No encoder exists for this column
+            # Convert any remaining object/category column to integer codes
+            if df[col].dtype == object or str(df[col].dtype) == "category":
+
+                df[col] = (
+                    pd.Categorical(
+                        df[col].astype(str).str.strip().str.lower()
+                    ).codes
+                )
+
+    # Final safety: LightGBM only accepts numeric columns
+    for col in features:
+
+        if col in df.columns:
+
+            if df[col].dtype == object or str(df[col].dtype) == "category":
+
+                df[col] = (
+                    pd.to_numeric(df[col], errors="coerce")
+                    .fillna(-1)
+                    .astype(int)
+                )
 
     return df
-    
+
 
 if page == "Prediction":
 
@@ -707,6 +738,20 @@ if page == "Prediction":
             errors="coerce"
         )
 
+        # Prediction
+
+        missing = [
+            c for c in risk_features
+            if c not in patient_df.columns
+        ]
+
+        if missing:
+            st.error(f"Missing columns: {missing}")
+            st.stop()
+
+        # -------------------------
+        # Risk Prediction
+        # -------------------------
         risk_encoded = encode_dataframe(
             patient_df,
             risk_encoder,
@@ -715,21 +760,14 @@ if page == "Prediction":
 
         risk_input = risk_encoded[risk_features]
 
+        risk_input = risk_input.apply(
+            pd.to_numeric,
+            errors="coerce"
+        ).fillna(-1).astype(float)
 
-        #  Prediction
-        missing = [
-                c
-                for c in risk_features
-                if c not in patient_df.columns
-            ]
+        print(risk_input)
+        print(risk_input.dtypes)
 
-        if missing:
-
-                st.error(missing)
-
-                st.stop()
-
-            
         risk_prediction = risk_model.predict(
             risk_input
         )[0]
@@ -744,6 +782,9 @@ if page == "Prediction":
 
         risk_prediction_text = risk_label[predicted_risk]
 
+        # -------------------------
+        # Frequency Prediction
+        # -------------------------
         frequency_df = patient_df.copy()
 
         frequency_df["Predicted Risk Level Encoded"] = predicted_risk
@@ -758,6 +799,11 @@ if page == "Prediction":
             frequency_features
         ]
 
+        frequency_input = frequency_input.apply(
+            pd.to_numeric,
+            errors="coerce"
+        ).fillna(-1).astype(float)
+
         frequency_prediction = frequency_model.predict(
             frequency_input
         )[0]
@@ -768,6 +814,9 @@ if page == "Prediction":
             )[0]
         )
 
+        # -------------------------
+        # Intensity Prediction
+        # -------------------------
         intensity_df = patient_df.copy()
 
         intensity_df["Predicted Risk Level Encoded"] = predicted_risk
@@ -778,10 +827,16 @@ if page == "Prediction":
             intensity_features
         )
 
-
         intensity_input = intensity_encoded[
             intensity_features
         ]
+
+        intensity_input = intensity_input.apply(
+            pd.to_numeric,
+            errors="coerce"
+        ).fillna(-1).astype(float)
+
+        print(intensity_input.dtypes)
 
         intensity_prediction = intensity_model.predict(
             intensity_input
@@ -793,6 +848,9 @@ if page == "Prediction":
             )[0]
         )
 
+        # -------------------------
+        # Time Prediction
+        # -------------------------
         time_df = patient_df.copy()
 
         time_df["Predicted Risk Level Encoded"] = predicted_risk
@@ -807,6 +865,11 @@ if page == "Prediction":
             time_features
         ]
 
+        time_input = time_input.apply(
+            pd.to_numeric,
+            errors="coerce"
+        ).fillna(-1).astype(float)
+
         time_prediction = time_model.predict(
             time_input
         )[0]
@@ -817,7 +880,6 @@ if page == "Prediction":
             )[0]
         )
 
-        # Display labels for exercise duration
         time_display = {
             "0-20": "0-20",
             "20.1-40": "20-40",
@@ -830,6 +892,9 @@ if page == "Prediction":
             str(time_prediction)
         )
 
+        # -------------------------
+        # Type Prediction
+        # -------------------------
         type_df = patient_df.copy()
 
         type_encoded = encode_dataframe(
@@ -841,6 +906,11 @@ if page == "Prediction":
         type_input = type_encoded[
             type_features
         ]
+
+        type_input = type_input.apply(
+            pd.to_numeric,
+            errors="coerce"
+        ).fillna(-1).astype(float)
 
         type_input = type_scaler.transform(
             type_input
@@ -856,7 +926,6 @@ if page == "Prediction":
                 [type_prediction]
             )[0]
         )
-
             # Display Results
 
         st.success("Exercise Prescription Generated Successfully")
