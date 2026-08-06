@@ -289,15 +289,6 @@ if page == "Prediction":
             key="smoking"
         )
 
-        alcoholic = st.selectbox(
-            "Alcoholic",
-            [
-                "yes",
-                "no",
-                "ocassionally"
-            ],
-            key="alcoholic"
-        )
 
         family_history = st.selectbox(
             "Family History",
@@ -606,7 +597,6 @@ if page == "Prediction":
         "Living Environment": living_environment,
         "Occupation": occupation,
         "Smoking": smoking,
-        "Alcoholic": alcoholic,
         "Family History": family_history,
         "Exercise Habit - Frequency": exercise_frequency,
         "Exercise Habit - Duration": exercise_duration,
