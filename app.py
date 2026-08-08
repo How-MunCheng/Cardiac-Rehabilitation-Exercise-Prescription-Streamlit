@@ -29,9 +29,9 @@ page = st.sidebar.radio(
 
 risk_model = joblib.load("models/Risk_DecisionTree_RFE_LR.pkl")
 
-frequency_model = joblib.load("models/Frequency_CatBoost_ANOVA_noYear.pkl")
+frequency_model = joblib.load("models/Frequency_CatBoost_ANOVA.pkl")
 
-intensity_model = joblib.load("models/Intensity_LightGBM_RF_noYear.pkl")
+intensity_model = joblib.load("models/Intensity_LightGBM_RF.pkl")
 
 time_model = joblib.load("models/Time_CatBoost_RFE_SVM.pkl")
 
