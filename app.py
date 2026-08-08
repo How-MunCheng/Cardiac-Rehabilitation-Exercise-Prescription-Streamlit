@@ -120,7 +120,7 @@ frequency_features = [
 'Risk Factor - ECHO - EF', 
 'Test Today - peak HR', 
 'Age', 
-'Family History'
+'Family History',
 'Risk Factor - HPL'
 ]
 
