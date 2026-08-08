@@ -29,9 +29,9 @@ page = st.sidebar.radio(
 
 risk_model = joblib.load("models/Risk_DecisionTree_RFE_LR.pkl")
 
-frequency_model = joblib.load("models/Frequency_CatBoost_ANOVA.pkl")
+frequency_model = joblib.load("models/Frequency_CatBoost_ANOVA_noYear.pkl.pkl")
 
-intensity_model = joblib.load("models/Intensity_LightGBM_RF.pkl")
+intensity_model = joblib.load("models/Intensity_LightGBM_RF_noYear.pkl")
 
 time_model = joblib.load("models/Time_CatBoost_RFE_SVM.pkl")
 
@@ -109,7 +109,6 @@ risk_features = [
 frequency_features = [
 'Weekly_Exercise_Duration', 
 'Risk Factor - Exercise', 
-'Year', 
 'Cooling Down', 
 'Balance in Sitting and Standing', 
 'Walking', 
@@ -122,6 +121,7 @@ frequency_features = [
 'Test Today - peak HR', 
 'Age', 
 'Family History'
+'Risk Factor - HPL'
 ]
 
 intensity_features = [
@@ -139,7 +139,7 @@ intensity_features = [
 'Occupation', 
 'Diagnosis', 
 'Exercise Habit - Mode', 
-'Year'
+'Risk Factor - Exercise'
 ]
 
 time_features = [
@@ -241,16 +241,6 @@ if page == "Prediction":
     col1, col2 = st.columns(2)
 
     with col1:
-
-        year = st.selectbox(
-            "Year",
-            [2026, 2025, 2024, 2023, 2022, 2021, 
-             2020, 2019, 2018, 2017, 2016, 2015, 
-             2014, 2013, 2012, 2011, 2010, 2009, 
-             2008, 2007, 2006, 2005, 2004, 2003, 
-             2002, 2001, 2000, 1999, 1998, 1997],
-            key="year"
-        )
 
         gender = st.selectbox(
             "Gender",
@@ -612,7 +602,6 @@ if page == "Prediction":
 
     patient_data = {
 
-        "Year": year,
         "Gender": gender,
         "Age": age,
         "Marital Status": marital_status,
@@ -722,7 +711,6 @@ if page == "Prediction":
         )
 
         numeric_cols = [
-            "Year",
             "Age",
             "Exercise Habit - Frequency",
             "Exercise Habit - Duration",
