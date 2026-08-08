@@ -434,12 +434,6 @@ if page == "Prediction":
 
     with col3:
 
-        risk_hpt = st.selectbox(
-            "Risk Factor - HPT",
-            ["yes", "no"],
-            key="risk_hpt"
-        )
-
         risk_dm = st.selectbox(
             "Risk Factor - DM",
             ["yes", "no"],
@@ -450,12 +444,6 @@ if page == "Prediction":
             "Risk Factor - HPL",
             ["yes", "no"],
             key="risk_hpl"
-        )
-
-        risk_family = st.selectbox(
-            "Risk Factor - Family hx",
-            ["yes", "no"],
-            key="risk_family"
         )
 
         risk_exercise = st.selectbox(
@@ -619,10 +607,8 @@ if page == "Prediction":
         "Posture": posture,
         "Functional Activity": functional,
         "Balance in Sitting and Standing": balance,
-        "Risk Factor - HPT": risk_hpt,
         "Risk Factor - DM": risk_dm,
         "Risk Factor - HPL": risk_hpl,
-        "Risk Factor - Family hx": risk_family,
         "Risk Factor - Exercise": risk_exercise,
         "Risk Factor - Stress": risk_stress,
         "Risk Factor - Smoking": risk_smoking,
